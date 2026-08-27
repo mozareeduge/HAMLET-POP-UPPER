@@ -869,3 +869,54 @@ acceptance:
   - "Screenshots at 1440x900 and 412x915 confirm the skull dominates the terminal frame, overlaps the mortality text, and the text stays legible in front where they intersect, on both."
 executed: '2026-08-27' · Hamlet_Pop_Upper_v1.8_SINGLE_FILE.html
 ```
+
+## Skull glyph craft fix (2026-08-27)
+
+He looked at the enlarged skull and called it "too rough, without care." Not
+a taste note to ballot — a real defect, found by checking the bitmap
+against itself rather than by eye.
+
+```yaml
+decision: HPU-18
+title: Skull bitmap's teeth row was not mirror-symmetric; one tooth sat outside the jaw's own width
+status: decided
+priority: P1
+origin: mistake
+finding: >
+  Row 11 of the original 12x12 bitmap ("..X.X.X.X.X.") placed teeth at
+  columns 2,4,6,8,10. Column 10 falls outside the jaw's own filled range
+  at row 10 (columns 2-9), so that tooth rendered as a disconnected block
+  hanging off the bottom-right with no jaw material above it — exactly the
+  "extra odd block" visible in his screenshot. Checked programmatically:
+  every other row in the original bitmap (cranium, both eyes, nose, jaw
+  taper) WAS already mirror-symmetric; only the teeth row was not. The
+  defect was narrow but real, not a matter of taste.
+evidence:
+  repo: (local artifact)
+  commit: v1.8 sha256 39691846dc87d970a446db2c010337f509c08ec750a22c72881dd2815a987bc3 (the version he saw)
+  locus: "shared #skullGlyph <g> — teeth row bitmap"
+  observed: '2026-08-27'
+  method: >
+    Python mirror-check script over the row strings (asserts row[x]==row[w-1-x]
+    for every row), confirming the exact asymmetric row and, separately, that
+    every other row was already correct. Fix re-verified with the same script
+    (zero asymmetries reported) plus Playwright screenshots at the rail-mark
+    (desktop) and the terminal scene (mobile, 412x915).
+decision_text: >
+  Teeth row rebuilt as "..X.X..X.X.." — four teeth at columns 2,4,7,9,
+  mirror-symmetric around the grid's own center, all within the jaw's
+  actual width. While rebuilding, also merged each row's contiguous runs
+  into single <rect> elements (20 rects total, was 114 unit-cell rects) to
+  remove internal seams between adjacent 1x1 rects at large render sizes,
+  and added shape-rendering:crispEdges on the glyph and its CSS class.
+  Both changes are strictly craft/rendering fixes — the glyph's silhouette
+  intent (domed cranium, two square eyes, a nose notch, a tapering jaw
+  with teeth) is unchanged.
+implementation:
+  - "shared <g id=\"skullGlyph\">: bitmap corrected + merged into 20 run-length rects; shape-rendering=\"crispEdges\" added"
+  - ".skull-glyph{shape-rendering:crispEdges}"
+acceptance:
+  - "Python script: zero mirror-asymmetries across all 12 rows (was 5, all in the teeth row)."
+  - "Screenshots (rail-mark at 1440x900; terminal scene at 412x915) confirm symmetric eyes/nose/jaw/teeth, no disconnected pixels."
+executed: '2026-08-27' · Hamlet_Pop_Upper_v1.8_SINGLE_FILE.html (sha256 9071113c047b8df53a41e8cbb504f11279bf984d1a9b5453cbe6293287a17751)
+```
