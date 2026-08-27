@@ -990,3 +990,68 @@ acceptance:
   - "Screenshots at 1440x900 and 412x915 confirm the bar sits directly under the title and spans exactly its width at both sizes."
 executed: '2026-08-27' · Hamlet_Pop_Upper_v1.8_SINGLE_FILE.html (sha256 bbcd836933513a3d7c5c484f6c5de6ee776b3e20a4b8bc2f93c2f3720fa2a624)
 ```
+
+## GitHub Pages enabled — final check (2026-08-27)
+
+He enabled Pages himself (Settings → Pages → Deploy from branch → `main` /
+root, the one step this session couldn't do via API) and asked for a final
+check of the live work.
+
+**Environment constraint, disclosed rather than routed around:** this
+session's egress proxy returned a policy denial (403 on CONNECT) for
+`mozareeduge.github.io` — confirmed via the proxy's own status endpoint,
+not inferred. Per this environment's own operating rules, a 403 from the
+proxy is an organization policy denial to be reported, not retried or
+worked around. This session cannot independently confirm
+`https://mozareeduge.github.io/hamlet-pop-upper/` loads. He can — the
+GitHub Pages build is a standard static deploy of the exact `index.html`
+already verified below, and he had no trouble reaching earlier artifact
+links from his own device.
+
+**What this session verified instead — the real content, over a real
+HTTP origin (not `file://`) for the first time in this project's history:**
+served `index.html` from `python3 -m http.server` on `127.0.0.1` (a
+genuine `http://` origin, functionally equivalent to what Pages serves —
+same file, same storage semantics, only the domain differs) and ran the
+exact scenario `PROOF_GAPS_AND_NEXT_VALIDATION.md` flagged as blocked
+since the v1.6 package ("a real localhost server... Chromium returned
+`ERR_BLOCKED_BY_ADMINISTRATOR`... remember an answer, reload/close-reopen,
+verify scar and accessible label").
+
+```yaml
+decision: HPU-20
+title: Closed the standing v1.6 persistence proof gap — verified for real, not simulated
+status: decided
+priority: P1
+origin: unmade-decision
+finding: >
+  "Stable-origin persistence" had been an open proof gap since v1.6:
+  every prior QA pass could only exercise a within-run delayed-memory path
+  or a storage shim, never a real close-and-reopen against a real
+  http:// origin, because every harness that tried hit an infrastructure
+  block. Not re-diagnosed here as a defect — closed as a verification gap.
+evidence:
+  repo: (local artifact, served locally)
+  commit: v1.8 sha256 bbcd836933513a3d7c5c484f6c5de6ee776b3e20a4b8bc2f93c2f3720fa2a624
+  observed: '2026-08-27'
+  method: >
+    Playwright against http://127.0.0.1:8743/index.html (python3 -m
+    http.server). First attempt used browser.newPage() twice, which
+    Playwright silently gives separate isolated browser contexts —
+    correctly showed no persistence, but that was a test-methodology
+    artifact (two different simulated browser profiles), not a finding
+    about the artifact; caught by re-deriving instead of taken at face
+    value. Corrected: one browser.newContext(), two page opens within it
+    (a fresh tab in the same profile — the real "close and reopen" case).
+decision_text: >
+  Confirmed clean: after answering "to be" with "Remember this answer"
+  checked, closing the tab, and opening a fresh tab in the same profile
+  against the same origin — localStorage held 'to_be', the remembered
+  scar rendered on the button, aria-label correctly read "To be,
+  remembered from an earlier call", and the checkbox came back pre-checked.
+  Also confirmed on the same origin: the skull renders at the rail-mark,
+  the event-loader is present, and the terminal path throws no JS errors.
+acceptance:
+  - "localStorage, remembered-scar class, aria-label, and checkbox state all correct across a same-profile tab close/reopen on a genuine http:// origin."
+executed: '2026-08-27' · verification only, no code change
+```
