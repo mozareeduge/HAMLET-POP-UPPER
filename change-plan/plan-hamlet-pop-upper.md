@@ -920,3 +920,73 @@ acceptance:
   - "Screenshots (rail-mark at 1440x900; terminal scene at 412x915) confirm symmetric eyes/nose/jaw/teeth, no disconnected pixels."
 executed: '2026-08-27' · Hamlet_Pop_Upper_v1.8_SINGLE_FILE.html (sha256 9071113c047b8df53a41e8cbb504f11279bf984d1a9b5453cbe6293287a17751)
 ```
+
+## Title + red line unified into a general loader (2026-08-27)
+
+Direct instruction: "make the title of work and the red line that appears
+below it as a kind of loader for another event... proportionally
+well-designed, based on related skills." Checked the `dataviz` skill first
+— it's built for multi-series charts and its palette/legend machinery
+doesn't apply to a single ambient progress line; its applicable principles
+(thin marks, text never carries series color) were already satisfied. The
+piece's own established idiom (hairlines, `steps()` easing, rust reserved
+for events) remained the real authority here.
+
+```yaml
+decision: HPU-19
+title: Defer-gauge and idle-pulse unified into one always-on event loader, sized to the title's own width
+status: decided
+priority: P1
+origin: mistake
+finding: >
+  HPU-14's idle-pulse animated .run-bit, an element inside <dialog> — a
+  closed dialog renders none of its descendants (UA stylesheet
+  display:none), so the pulse was structurally invisible for the entire
+  closed/idle period it was built to show. Never caught by screenshot at
+  the time (HPU-13's defer-gauge had the identical bug and WAS caught by
+  screenshot then, but the parallel case wasn't re-checked). Separately,
+  the defer-gauge only ever ran during an explicit "later"; an ordinary
+  scheduled wait had no equivalent signal at all.
+evidence:
+  repo: (local artifact)
+  commit: v1.8 sha256 39691846dc87d970a446db2c010337f509c08ec750a22c72881dd2815a987bc3 (pre-fix)
+  locus: "artifact — .run-bit.is-idle (dead, inside <dialog>), old .defer-gauge (defer-only)"
+  observed: '2026-08-27'
+  method: >
+    Playwright, real time (no clock compression): (1) loader opacity read
+    right after page load, before the first question — .55, confirming
+    visibility from frame one; (2) loader opacity read mid-wait after an
+    ordinary answer (previously would have been the dead run-bit path) —
+    .55, confirmed visible; (3) loader opacity read mid-"later" — .55,
+    confirmed the general mechanism still covers deferral; (4) title vs.
+    loader rendered width compared directly via getBoundingClientRect —
+    132.90625px vs. 132.90625px, exact match, on desktop and confirmed
+    proportionally correct on mobile (412x915) by screenshot; (5) a full
+    92-second real-time run with realistic interaction produced zero JS
+    errors.
+decision_text: >
+  One mechanism replaces both: .event-loader, wrapped with .work-title in
+  a new .title-loader flex column (width:max-content), so the bar is
+  always exactly as wide as the title's own rendered text — proportional
+  by construction, not by a guessed fixed number. Started in finishClose()
+  (and at initial load / restartWork(), matching that same closed-entry
+  moment) against nextEventDelay() = the sooner of the machine's own
+  scheduled return or the next fixed death; stopped unconditionally by
+  openQuestion()/beginImpact()/beginTerminal() the instant either fires.
+  A death during an active, continuing deferral (DR-16-02, unchanged)
+  still doesn't cancel it — beginImpact() stops the loader on any impact,
+  but finishClose() correctly restarts it afterward against the real
+  remaining time, which is simpler and more accurate than trying to keep
+  the old bar running through an interruption without resetting it.
+  .run-bit keeps only its original, pre-v1.8 role (solid when the dialog
+  is open) — the idle-pulse animation and its dead code are removed.
+implementation:
+  - "HTML: <div class=\"title-loader\"><div class=\"work-title\">...</div><span class=\"event-loader\" id=\"eventLoader\"></span></div>"
+  - "CSS: .title-loader{display:flex;flex-direction:column;width:max-content}; .event-loader{margin-top:4px;height:1px;background:var(--signal-paper)}; removed .run-bit.is-idle + @keyframes idle-pulse"
+  - "JS: startLoader(ms)/stopLoader() (renamed from showDeferGauge/hideDeferGauge); nextEventDelay() = min(nextAskAt-worldElapsed, timeToNextScoreEvent()); setIdle() and all its call sites removed"
+  - "Media-query fixes: two `.work-title{display:none}` rules at cramped heights now hide `.title-loader` (the whole wrapper), so a hidden title never leaves an orphaned loader bar; two positioning rules (`left`, `top`) moved from `.work-title` to `.title-loader` since positioning now lives on the wrapper"
+acceptance:
+  - "Playwright, real time: loader visible (opacity .55) at load, mid-answer-wait, and mid-defer; title/loader width match exactly (132.90625px both); full 92s real run, zero JS errors."
+  - "Screenshots at 1440x900 and 412x915 confirm the bar sits directly under the title and spans exactly its width at both sizes."
+executed: '2026-08-27' · Hamlet_Pop_Upper_v1.8_SINGLE_FILE.html (sha256 bbcd836933513a3d7c5c484f6c5de6ee776b3e20a4b8bc2f93c2f3720fa2a624)
+```

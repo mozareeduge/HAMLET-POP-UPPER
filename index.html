@@ -42,8 +42,15 @@ button{-webkit-tap-highlight-color:transparent}
   background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px,transparent 1px 5px);
 }
 .work::after{content:"";position:absolute;inset:0;pointer-events:none;border:1px solid rgba(232,229,215,.03)}
-.work-title{
+/* v1.8 follow-up: the title becomes the label for a loader toward whatever happens next — the
+   machine's own scheduled return, or a fixed death, whichever is sooner. The bar is sized to
+   100% of this wrapper's content width, so it always matches the title's own rendered width
+   instead of a guessed fixed number. */
+.title-loader{
   position:absolute;z-index:1;top:calc(var(--safe-t) + 6px);left:calc(var(--safe-l) + 7px);
+  display:flex;flex-direction:column;align-items:stretch;width:max-content
+}
+.work-title{
   color:rgba(232,229,215,.33);font:700 9px/1 var(--mono);letter-spacing:.17em;text-transform:uppercase;user-select:none
 }
 .work-title::before{content:"";display:inline-block;width:13px;height:1px;margin:0 9px 3px 0;background:currentColor}
@@ -105,17 +112,15 @@ dialog.hamlet-dialog::backdrop{background:rgba(15,16,14,.015)}
 .rail-mark .skull-glyph{color:var(--ink)}
 .title-status{height:100%;display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:0 11px;color:var(--muted);letter-spacing:.08em}
 .run-bit{width:6px;height:6px;border:1px solid currentColor}dialog[open] .run-bit{background:var(--ink)}
-/* v1.8 / HPU-14: a wordless "alive, waiting" signal for the closed/idle gap between calls —
-   visible dramatic time (HZN-006) should read as time passing, not as nothing happening. */
-.run-bit.is-idle{animation:idle-pulse 2400ms ease-in-out infinite}
-@keyframes idle-pulse{0%,100%{opacity:.35}50%{opacity:.9}}
-/* v1.8 / HPU-13: "ask me later" made legible without a word of explanatory prose — a hairline
-   under the work-title that drains from full to empty over the exact deferral it stands for.
-   Lives on the main stage, not inside the dialog: the dialog is closed for the whole deferral,
-   so anything placed inside it would be invisible for exactly the period it needs to show. */
-.defer-gauge{
-  position:absolute;z-index:1;top:calc(var(--safe-t) + 17px);left:calc(var(--safe-l) + 7px);
-  height:1px;width:64px;background:var(--signal-paper);opacity:0;transform-origin:left center;transform:scaleX(0)
+/* v1.8 follow-up, replacing HPU-13 + HPU-14: one loader instead of two separate, narrower
+   signals. The old idle-pulse lived on .run-bit, inside <dialog> — a closed dialog renders none
+   of its descendants, so that pulse was structurally invisible for the entire period it was
+   built to show (caught only now, not by screenshot at the time). The old defer-gauge only ran
+   during an explicit "later"; ordinary scheduled waits had no equivalent signal at all. Both are
+   replaced by .event-loader below: always active while the machine is genuinely closed, timed to
+   whichever comes first — the machine's own scheduled return, or the next fixed death. */
+.event-loader{
+  margin-top:4px;height:1px;background:var(--signal-paper);opacity:0;transform-origin:left center;transform:scaleX(0)
 }
 .question-shell{position:relative;z-index:1;display:grid;grid-template-columns:minmax(175px,.72fr) minmax(0,1.28fr);min-height:208px}
 .question-chamber{position:relative;padding:29px 24px 25px 28px;border-right:1px solid rgba(23,24,20,.34);display:flex;align-items:flex-end}
@@ -237,7 +242,7 @@ noscript{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color
   dialog.hamlet-dialog{left:50%;width:calc(100vw - 48px)}
 }
 @media (max-width:700px){
-  .work-title{left:calc(var(--safe-l) + 1px);font-size:8px}
+  .title-loader{left:calc(var(--safe-l) + 1px)}.work-title{font-size:8px}
   .mortality-field{left:calc(var(--safe-l) + 5px);right:calc(var(--safe-r) + 5px);bottom:calc(var(--safe-b) + 20px);width:auto;min-width:0}
   .mortality-list{gap:4px}.death{font-size:clamp(17px,5.05vw,21px)}.death.is-terminal{font-size:clamp(22px,6.4vw,27px);margin-top:6px}
   dialog.hamlet-dialog{top:calc(43% + var(--pressure-y));left:50%;width:calc(100vw - var(--safe-l) - var(--safe-r) - 10px);max-width:460px;max-height:calc(100svh - 18px)}
@@ -254,18 +259,18 @@ noscript{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color
   .question-chamber{padding-inline:15px}.chamber-label{left:15px}.control-side{padding-inline:15px}.decision{font-size:10px;letter-spacing:.045em}.remember{width:100%}.later{width:100%;margin-left:0}.machine-note{min-height:12px}
 }
 @media (max-height:500px) and (min-width:520px){
-  .work{min-height:280px}.work-title{top:9px}
+  .work{min-height:280px}.title-loader{top:9px}
   .mortality-field{left:20px;bottom:16px;width:min(350px,42vw)}.mortality-list{gap:2px}.death{font-size:clamp(14px,2.15vw,18px);line-height:1.08}.death.is-terminal{font-size:clamp(19px,2.75vw,23px);margin-top:4px}
   dialog.hamlet-dialog{top:50%;left:50%;width:min(800px,max(440px,calc(100vw - 70px)));max-width:none;max-height:calc(100svh - 16px)}.window{max-height:calc(100svh - 16px)}.instrument-rail{height:22px}
   .question-shell{grid-template-columns:minmax(125px,.62fr) minmax(0,1.38fr);min-height:0}.question-chamber{padding:23px 18px 15px}.chamber-label{top:8px;left:18px}.prompt{font-size:clamp(19px,2.75vw,26px);max-width:16ch}.control-side{padding:13px 18px 11px}
   .decision{min-height:45px}.utility-row{margin-top:8px;padding-top:7px}.remember,.later{min-height:36px}.machine-note{margin-top:3px}
 }
 @media (max-height:360px) and (min-width:520px){
-  .work-title{display:none}.mortality-field{bottom:10px}.death{font-size:13px}.death.is-terminal{font-size:18px}
+  .title-loader{display:none}.mortality-field{bottom:10px}.death{font-size:13px}.death.is-terminal{font-size:18px}
   .instrument-rail{height:20px}.question-chamber{padding:18px 16px 10px}.chamber-label{display:none}.prompt{font-size:18px}.control-side{padding:9px 15px 8px}.decision{min-height:40px}.utility-row{margin-top:6px;padding-top:5px}.remember,.later{min-height:34px}.machine-note{display:none}
 }
 @media (max-height:400px) and (max-width:519px){
-  .work{min-height:280px}.work-title{display:none}.mortality-field{bottom:8px}.death{font-size:13px;line-height:1.05}.death.is-terminal{font-size:18px;margin-top:3px}.mortality-list{gap:1px}
+  .work{min-height:280px}.title-loader{display:none}.mortality-field{bottom:8px}.death{font-size:13px;line-height:1.05}.death.is-terminal{font-size:18px;margin-top:3px}.mortality-list{gap:1px}
   dialog.hamlet-dialog{top:50%;width:calc(100vw - 18px);max-height:calc(100svh - 12px)}.window{max-height:calc(100svh - 12px)}
   .instrument-rail{height:20px;font-size:7px}.question-shell{display:grid;grid-template-columns:minmax(120px,.62fr) minmax(0,1.38fr);min-height:0}.question-chamber{min-height:0;padding:16px 12px 10px;border-right:1px solid rgba(23,24,20,.34);border-bottom:0}.chamber-label{display:none}.prompt{font-size:17px;line-height:1.06;max-width:14ch}.control-side{padding:8px 10px 7px}
   .decision-row{gap:6px}.decision{min-height:39px;font-size:8px}.utility-row{margin-top:6px;padding-top:5px;display:grid;grid-template-columns:1fr auto;gap:6px;min-height:34px}.remember{width:auto;min-height:34px;font-size:7px}.later{width:auto;min-height:34px;margin-left:0;font-size:7px}.machine-note{display:none}
@@ -283,8 +288,10 @@ noscript{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color
   </defs>
 </svg>
 <main class="work" id="work" aria-label="Hamlet Pop-Upper">
-  <div class="work-title" aria-hidden="true">Hamlet Pop-Upper</div>
-  <span class="defer-gauge" id="deferGauge" aria-hidden="true"></span>
+  <div class="title-loader">
+    <div class="work-title" aria-hidden="true">Hamlet Pop-Upper</div>
+    <span class="event-loader" id="eventLoader" aria-hidden="true"></span>
+  </div>
   <div class="event-trace" id="eventTrace" aria-hidden="true"></div>
   <svg class="world-claims" id="worldClaims" aria-hidden="true"></svg>
   <section class="mortality-field" aria-label="Deaths that have occurred">
@@ -362,10 +369,14 @@ noscript{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color
     ("to be." / "not to be." / "—") before withdrawing, the same shape a
     scored death's incision already took — both directions of the relation
     (yours in, the world's out) now read as one grammar.
-  - HPU-13: "ask me later" gets a wordless hairline gauge that drains over
-    its exact real duration — legible without a sentence of explanation.
-  - HPU-14: a slow idle-pulse on the run-bit marks genuine waiting (not
-    deferred, not mid-question) as time passing, not as nothing happening.
+  - HPU-13/14, later unified into one mechanism: the title becomes the
+    label for a loader (.event-loader) that drains over the exact real
+    time until whichever comes first — the machine's own scheduled
+    return, or the next fixed death. Originally two separate signals (a
+    defer-only gauge, plus an idle-pulse on .run-bit); the pulse lived
+    inside <dialog> and was therefore invisible for the entire closed
+    period it was meant to show — a closed dialog renders no descendants.
+    One always-on loader, sized to the title's own width, replaces both.
   - Fixed: v1.7's terminal-marked hairline only ever played once — a
     restart never replayed it. Now removed/re-added each time.
   - HPU-15 (the real cause of "interactions stop mattering"): an unanswered
@@ -393,7 +404,7 @@ const SCORE=[
    the first-half idle gap read as "long waiting," not as suspended time. */
 const TIMING={firstAskAt:1500,answerReturnBase:4500,laterReturnBase:7000,returnFloor:2200,returnSafetyMargin:700,traceHold:460,impactHold:900,deathRecallAfterAnswer:1250,closeAnimation:160,terminalAnswerHold:920,terminalWindowDeath:720,restartReveal:9000,kioskRestart:28000};
 const $=id=>document.getElementById(id);
-const el={work:$('work'),list:$('mortalityList'),dialog:$('hamletDialog'),window:$('windowFrame'),prompt:$('hamletPrompt'),toBe:$('toBe'),notToBe:$('notToBe'),remember:$('rememberAnswer'),later:$('askLater'),note:$('machineNote'),callCounter:$('callCounter'),trace:$('eventTrace'),live:$('liveRegion'),restart:$('restart'),afterimage:$('machineAfterimage'),claims:$('worldClaims'),wounds:$('woundLayer'),incision:$('eventIncision'),incisionText:$('eventIncisionText'),runBit:$('runBit'),deferGauge:$('deferGauge')};
+const el={work:$('work'),list:$('mortalityList'),dialog:$('hamletDialog'),window:$('windowFrame'),prompt:$('hamletPrompt'),toBe:$('toBe'),notToBe:$('notToBe'),remember:$('rememberAnswer'),later:$('askLater'),note:$('machineNote'),callCounter:$('callCounter'),trace:$('eventTrace'),live:$('liveRegion'),restart:$('restart'),afterimage:$('machineAfterimage'),claims:$('worldClaims'),wounds:$('woundLayer'),incision:$('eventIncision'),incisionText:$('eventIncisionText'),eventLoader:$('eventLoader')};
 let sessionMemory=null,storageOK=true,memoryWarningShown=false,remembered=null,visibleRemembered=null;
 let worldElapsed=0,lastTick=performance.now(),nextScoreIndex=0,nextAskAt=TIMING.firstAskAt,callCount=0,machineState='closed',lastDismissReason=null,lastAnswerValue=null,lastInteractionAt=-Infinity,deferredUntil=0,terminal=false,actionLock=false,closeTimer=null,answerTimer=null,impactTimer=null,terminalTimers=[],chosenPending=false,lastMachineRect=null;
 let audioCtx=null,audioUnlocked=false,audioSuppressed=false;
@@ -440,21 +451,25 @@ function captureMachineRect(){try{const r=el.window.getBoundingClientRect();if(r
 function showAfterimage(){const r=lastMachineRect;if(!r)return;el.afterimage.style.left=r.left+'px';el.afterimage.style.top=r.top+'px';el.afterimage.style.width=r.width+'px';el.afterimage.style.height=r.height+'px';el.afterimage.classList.remove('is-present');void el.afterimage.offsetWidth;el.afterimage.classList.add('is-present');requestAnimationFrame(drawClaims)}
 function clearAfterimage(){el.afterimage.classList.remove('is-present');el.afterimage.removeAttribute('style');if(el.claims)el.claims.replaceChildren()}
 function flashTrace(){el.trace.classList.remove('flash');void el.trace.offsetWidth;el.trace.classList.add('flash')}
-/* v1.8 / HPU-14: idle-pulse only while genuinely closed and waiting — never mid-question,
-   mid-impact, or mid-defer (the gauge already speaks for that state). */
-function setIdle(on){el.runBit.classList.toggle('is-idle',on)}
-/* v1.8 / HPU-13: shown for the exact real-duration of the deferral; hidden the instant the
-   deferral ends for any reason (natural reopen or an interrupting death) — never left stale. */
-function showDeferGauge(ms){
-  el.deferGauge.style.transition='none';el.deferGauge.style.transform='scaleX(1)';el.deferGauge.style.opacity='.55';
-  void el.deferGauge.offsetWidth;
-  el.deferGauge.style.transition='transform '+ms+'ms linear';el.deferGauge.style.transform='scaleX(0)'
+/* v1.8 follow-up: one loader, not two signals — see the CSS comment on .event-loader for why the
+   old idle-pulse (on .run-bit, inside <dialog>) never actually worked. Shown for the exact
+   real-duration until whichever comes first — the machine's own scheduled return, or the next
+   fixed death — and hidden the instant that period ends for any reason. Never left stale. */
+function startLoader(ms){
+  el.eventLoader.style.transition='none';el.eventLoader.style.transform='scaleX(1)';el.eventLoader.style.opacity='.55';
+  void el.eventLoader.offsetWidth;
+  el.eventLoader.style.transition='transform '+ms+'ms linear';el.eventLoader.style.transform='scaleX(0)'
 }
-function hideDeferGauge(){el.deferGauge.style.transition='opacity 160ms steps(2,end)';el.deferGauge.style.opacity='0';el.deferGauge.style.transform='scaleX(0)'}
+function stopLoader(){el.eventLoader.style.transition='opacity 160ms steps(2,end)';el.eventLoader.style.opacity='0';el.eventLoader.style.transform='scaleX(0)'}
 /* v1.8 / HPU-11: the machine never spontaneously reopens later than it can afford to — capped by
    how long until the next fixed death, so the back half of the score keeps a real, completable
    interaction window instead of every late call being pre-empted before it can be answered. */
 function timeToNextScoreEvent(){return nextScoreIndex<SCORE.length?Math.max(0,SCORE[nextScoreIndex].at-worldElapsed):Infinity}
+/* v1.8 follow-up: what the loader counts down to — whichever of the two possible next events is
+   sooner. nextAskAt is always finite whenever the machine is genuinely closed (set by
+   scheduleReturn() before finishClose() ever runs), so this only reads Infinity from
+   timeToNextScoreEvent() once the terminal event has already been delivered. */
+function nextEventDelay(){return Math.min(nextAskAt===Infinity?Infinity:Math.max(0,nextAskAt-worldElapsed),timeToNextScoreEvent())}
 function scheduleReturn(reason){
   const base=reason==='later'?TIMING.laterReturnBase:TIMING.answerReturnBase;
   const cap=Math.max(TIMING.returnFloor,timeToNextScoreEvent()-TIMING.returnSafetyMargin);
@@ -494,24 +509,25 @@ function focusPrompt(){requestAnimationFrame(()=>{try{el.prompt.focus({preventSc
 function focusIncision(){requestAnimationFrame(()=>{try{el.incisionText.focus({preventScroll:true})}catch(_){}})}
 function openQuestion(cause='scheduled'){
   if(terminal||machineState!=='closed'||actionLock)return false;
-  setIdle(false);hideDeferGauge();
+  stopLoader();
   callCount++;nextAskAt=Infinity;visibleRemembered=remembered;el.callCounter.textContent='call '+String(callCount).padStart(2,'0');el.window.classList.remove('withdrawing','dying');el.window.classList.add('opening');setMode('question');updateMemoryUI(true);
   if(!safeOpenDialog())return false;machineState='question';actionLock=false;machineSound('open');
   requestAnimationFrame(()=>{if(machineState!=='question')return;captureMachineRect();drawClaims();focusPrompt();setTimeout(()=>el.window.classList.remove('opening'),220)});return true
 }
 function finishClose(){
   safeCloseDialog();el.window.classList.remove('withdrawing');machineState='closed';actionLock=false;
-  /* v1.8 / HPU-13/14: the two idle signals never compete — the gauge (a specific promise
-     draining) suppresses the generic idle-pulse (nothing in particular pending) for as long as
-     the deferral is genuinely active. */
-  setIdle(!(lastDismissReason==='later'&&worldElapsed<deferredUntil));
+  /* v1.8 follow-up: the loader restarts here, against whatever is actually next at this exact
+     moment — correct whether that's a plain scheduled return or an active deferral continuing
+     past an interrupting death (beginImpact() always stops the loader on impact; this is what
+     restarts it correctly afterward, timed to the real remaining wait, not the original one). */
+  const d=nextEventDelay();
+  if(isFinite(d)&&d>0)startLoader(d);else stopLoader();
   requestAnimationFrame(drawClaims)
 }
 function closeQuestion(reason){
   if(machineState!=='question'||actionLock||terminal)return;
   actionLock=true;machineState='closing';lastDismissReason=reason;lastInteractionAt=worldElapsed;el.window.classList.add('withdrawing');
   nextAskAt=scheduleReturn(reason);deferredUntil=reason==='later'?nextAskAt:0;
-  if(reason==='later')showDeferGauge(nextAskAt-worldElapsed);
   if(closeTimer)clearTimeout(closeTimer);closeTimer=setTimeout(()=>{closeTimer=null;finishClose()},TIMING.closeAnimation)
 }
 function chooseAnswer(value,button){
@@ -553,11 +569,11 @@ function presentImpact(event,kind){
 function beginImpact(event){
   if(terminal)return;const kind=classifyEncounter(),wasChosen=chosenPending,wasClosing=machineState==='closing',deferActive=lastDismissReason==='later'&&worldElapsed<deferredUntil;
   encounterRecords.set(event.id,{kind,at:worldElapsed,call:callCount,answer:lastAnswerValue});
-  setIdle(false);
-  /* v1.8 / HPU-13: a death does not cancel an active deferral (DR-16-02, unchanged) — so it must
-     not silently kill the gauge that stands for it either. Only hide the gauge when the deferral
-     itself is actually ending here (every other encounter kind, including a lapsed 'later'). */
-  if(!(kind==='deferred'&&deferActive))hideDeferGauge();
+  /* v1.8 follow-up: always stop the loader on impact, even for a deferral that continues past
+     this death (DR-16-02, unchanged — the death doesn't cancel it). finishClose() below correctly
+     restarts it afterward against the real remaining time, which is simpler and more accurate
+     than trying to keep the old bar running through an interruption without resetting it. */
+  stopLoader();
   /* v1.8 / HPU-12: a death can interrupt a pending answer/later trace mid-beat — presentImpact()
      is about to overwrite the incision text anyway, but the stale data-trace attribute (and its
      ink-colored styling) must not leak into impact/terminal mode. */
@@ -599,7 +615,7 @@ function presentNextCall(){
 }
 function beginTerminal(event){
   if(terminal)return;terminal=true;nextAskAt=Infinity;clearTransientTimers();const kind='terminal';encounterRecords.set(event.id,{kind,at:worldElapsed,call:callCount,answer:lastAnswerValue});
-  setIdle(false);hideDeferGauge();
+  stopLoader();
   el.toBe.classList.remove('chosen');el.notToBe.classList.remove('chosen');chosenPending=false;delete el.window.dataset.trace;if(!safeOpenDialog())return;machineState='terminal';actionLock=true;captureMachineRect();el.incisionText.textContent=event.text;setMode('terminal',kind);enableControls(false);worldSound(true);focusIncision();requestAnimationFrame(drawClaims);
   /* v1.7 / HPU-B3, resolved A: the apparatus is kept speaking "So am I." as its own line —
      this hairline marks that one collapse of interface/character as deliberate, not missed.
@@ -613,7 +629,7 @@ function beginTerminal(event){
 function deliverScoreEvent(event){if(event.terminal)beginTerminal(event);else beginImpact(event)}
 function clearRunTimers(){terminalTimers.forEach(clearTimeout);terminalTimers=[];clearTransientTimers()}
 function restartWork(){
-  clearRunTimers();safeCloseDialog();el.window.classList.remove('opening','withdrawing','dying','terminal-marked');delete el.window.dataset.trace;hideDeferGauge();el.restart.classList.remove('is-visible');el.restart.hidden=true;clearAfterimage();audioSuppressed=false;worldElapsed=0;lastTick=performance.now();nextScoreIndex=0;nextAskAt=TIMING.firstAskAt;callCount=0;machineState='closed';lastDismissReason=null;lastAnswerValue=null;lastInteractionAt=-Infinity;deferredUntil=0;terminal=false;actionLock=false;chosenPending=false;lastMachineRect=null;el.dialog.style.setProperty('--pressure-y','0px');el.work.style.setProperty('--mortality-rise','0px');el.incisionText.textContent='';setMode('question');seedCondition();visibleRemembered=remembered;updateMemoryUI(true);setIdle(true);requestAnimationFrame(drawClaims)
+  clearRunTimers();safeCloseDialog();el.window.classList.remove('opening','withdrawing','dying','terminal-marked');delete el.window.dataset.trace;el.restart.classList.remove('is-visible');el.restart.hidden=true;clearAfterimage();audioSuppressed=false;worldElapsed=0;lastTick=performance.now();nextScoreIndex=0;nextAskAt=TIMING.firstAskAt;callCount=0;machineState='closed';lastDismissReason=null;lastAnswerValue=null;lastInteractionAt=-Infinity;deferredUntil=0;terminal=false;actionLock=false;chosenPending=false;lastMachineRect=null;el.dialog.style.setProperty('--pressure-y','0px');el.work.style.setProperty('--mortality-rise','0px');el.incisionText.textContent='';setMode('question');seedCondition();visibleRemembered=remembered;updateMemoryUI(true);startLoader(nextEventDelay());requestAnimationFrame(drawClaims)
 }
 function processScore(){
   if(terminal)return;
@@ -629,7 +645,7 @@ el.dialog.addEventListener('cancel',e=>{e.preventDefault();if(machineState==='qu
 document.addEventListener('visibilitychange',()=>{lastTick=performance.now()});window.addEventListener('resize',()=>requestAnimationFrame(drawClaims));
 window.addEventListener('storage',e=>{if(e.key!=='hamlet-pop-upper:answer')return;remembered=e.newValue==='to_be'||e.newValue==='not_to_be'?e.newValue:null;if(machineState==='question'){visibleRemembered=remembered;updateMemoryUI(true)}});
 document.addEventListener('pointerdown',unlockAudio,{once:true,capture:true});document.addEventListener('keydown',unlockAudio,{once:true,capture:true});
-updateMemoryUI(true);seedCondition();setIdle(true);requestAnimationFrame(()=>{drawClaims();tick(performance.now())});
+updateMemoryUI(true);seedCondition();startLoader(nextEventDelay());requestAnimationFrame(()=>{drawClaims();tick(performance.now())});
 })();
 </script>
 </body>
