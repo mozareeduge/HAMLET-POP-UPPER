@@ -1,6 +1,147 @@
 <!doctype html>
 <html lang="en">
 <head>
+<!-- HAMLET C3 FAVICON START — selected C3 · Fork Register -->
+<link id="hamlet-c3-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%0A%3Crect%20width%3D%2232%22%20height%3D%2232%22%20fill%3D%22%230d0f0d%22%2F%3E%0A%3Cg%20fill%3D%22%23d7d4c6%22%3E%0A%20%20%3Crect%20x%3D%228%22%20y%3D%223%22%20width%3D%2216%22%20height%3D%222%22%2F%3E%0A%20%20%3Crect%20x%3D%226%22%20y%3D%225%22%20width%3D%2220%22%20height%3D%222%22%2F%3E%0A%20%20%3Crect%20x%3D%224%22%20y%3D%227%22%20width%3D%2224%22%20height%3D%223%22%2F%3E%0A%20%20%3Crect%20x%3D%223%22%20y%3D%2210%22%20width%3D%228%22%20height%3D%223%22%2F%3E%0A%20%20%3Crect%20x%3D%2221%22%20y%3D%2210%22%20width%3D%228%22%20height%3D%223%22%2F%3E%0A%20%20%3Crect%20x%3D%223%22%20y%3D%2213%22%20width%3D%227%22%20height%3D%223%22%2F%3E%0A%20%20%3Crect%20x%3D%2222%22%20y%3D%2213%22%20width%3D%227%22%20height%3D%223%22%2F%3E%0A%20%20%3Crect%20x%3D%224%22%20y%3D%2216%22%20width%3D%2224%22%20height%3D%223%22%2F%3E%0A%20%20%3Crect%20x%3D%226%22%20y%3D%2219%22%20width%3D%2220%22%20height%3D%222%22%2F%3E%0A%20%20%3Crect%20x%3D%228%22%20y%3D%2221%22%20width%3D%2216%22%20height%3D%222%22%2F%3E%0A%20%20%3Crect%20x%3D%228%22%20y%3D%2223%22%20width%3D%224%22%20height%3D%222%22%2F%3E%0A%20%20%3Crect%20x%3D%2220%22%20y%3D%2223%22%20width%3D%224%22%20height%3D%222%22%2F%3E%0A%20%20%3Crect%20x%3D%2211%22%20y%3D%2225%22%20width%3D%2210%22%20height%3D%222%22%2F%3E%0A%20%20%3Crect%20x%3D%2213%22%20y%3D%2227%22%20width%3D%226%22%20height%3D%222%22%2F%3E%0A%3C%2Fg%3E%0A%3Crect%20x%3D%229%22%20y%3D%2212%22%20width%3D%225%22%20height%3D%226%22%20fill%3D%22%23171915%22%2F%3E%0A%3Crect%20x%3D%2218%22%20y%3D%2211%22%20width%3D%225%22%20height%3D%226%22%20fill%3D%22%23171915%22%2F%3E%0A%3Crect%20x%3D%2223%22%20y%3D%2211%22%20width%3D%221%22%20height%3D%224%22%20fill%3D%22%23ff6138%22%2F%3E%0A%3Crect%20x%3D%2225%22%20y%3D%2211%22%20width%3D%221%22%20height%3D%224%22%20fill%3D%22%23b33118%22%2F%3E%0A%3C%2Fsvg%3E">
+<script>
+(() => {
+  "use strict";
+  const COLORS = { bg:"#0d0f0d", paper:"#d7d4c6", bone:"#ece8da", ink:"#171915", red:"#ff6138", red2:"#b33118" };
+  const MASTER = 512;
+  const master = document.createElement("canvas");
+  master.width = master.height = MASTER;
+  const m = master.getContext("2d");
+  const output = document.createElement("canvas");
+  output.width = output.height = 32;
+  const o = output.getContext("2d");
+  const state = { t:0, speed:1.0, playing:true, timer:null };
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  function smooth(x){ x=clamp(x,0,1); return x*x*(3-2*x); }
+  function phase(v,steps=16){ return Math.round((((v%1)+1)%1)*steps)/steps; }
+  function bg(){ m.clearRect(0,0,MASTER,MASTER); m.fillStyle=COLORS.bg; m.fillRect(0,0,MASTER,MASTER); }
+  function px(x,y,s,c,a=1){ m.globalAlpha=a; m.fillStyle=c; m.fillRect(x,y,s,s); m.globalAlpha=1; }
+  function skullGrid(){
+    return [
+      "000111110000","001111111000","011111111100","111100001110",
+      "111000000111","111000000111","111100001111","011111111110",
+      "001111111100","001100001100","000110011000","000111111000"
+    ].map(r=>r.split(""));
+  }
+  function drawSkull(x,y,size){
+    const grid=skullGrid(); const cell=size/12;
+    for(let r=0;r<grid.length;r++){
+      for(let c=0;c<grid[r].length;c++){
+        if(grid[r][c]==="1"){
+          const useHi=(r<3)||(r===7&&(c===1||c===10))||(r===8&&c>2&&c<9);
+          px(x+c*cell,y+r*cell,Math.ceil(cell),useHi?COLORS.bone:COLORS.paper,1);
+        }
+      }
+    }
+    return cell;
+  }
+  function tragicLine(x,y,size,p,small){
+    if(p<=.54) return;
+    const q=smooth((p-.54)/.18);
+    const yy=y+size*.57;
+    const start=x-(small?16:24);
+    const full=size+(small?32:48);
+    m.fillStyle=COLORS.red; m.globalAlpha=.22;
+    m.fillRect(start,yy-(small?10:7),full*q,small?26:14); m.globalAlpha=1;
+    m.fillStyle=COLORS.red2;
+    m.fillRect(start,yy-(small?4:2),full*q,small?10:5);
+  }
+  function terminalDim(x,y,size,p,small){
+    if(p<=.82) return;
+    const q=smooth((p-.82)/.18);
+    m.fillStyle=COLORS.bg; m.globalAlpha=.50*q;
+    m.fillRect(x+size*.08,y+size*.07,size*.84,size*.82); m.globalAlpha=1;
+    if(q<.75){
+      m.fillStyle=COLORS.red; m.globalAlpha=.22*(1-q);
+      m.fillRect(x+size*.73,y+size*.42,small?8:10,small?14:18); m.globalAlpha=1;
+    }
+  }
+  function renderMaster(t,small=false){
+    bg();
+    const p=phase(t,16);
+    const size=small?340:382;
+    const x=small?86:65;
+    const y=small?84:62;
+    const cell=drawSkull(x,y,size);
+
+    const cw=small?72:82;
+    const ch=small?78:92;
+    const ly=y+4.15*cell;
+    const lx=x+3.2*cell;
+    const rx=x+6.5*cell;
+
+    m.fillStyle=COLORS.ink;
+    m.fillRect(lx,ly,cw,ch);
+    m.fillRect(rx,ly-.15*cell,cw,ch);
+
+    if(p>.22 && p<.94){
+      const chooseRight=p>.45;
+      const cx=chooseRight?rx:lx;
+      const cy=chooseRight?(ly-.15*cell):ly;
+
+      m.fillStyle=COLORS.red2;
+      m.fillRect(cx,cy,cw,ch);
+      m.fillStyle=COLORS.red;
+      m.fillRect(cx+.55*cell,cy+.55*cell,Math.max(2,cw-1.1*cell),Math.max(2,ch-1.1*cell));
+
+      const tx=chooseRight?cx+cw+.55*cell:cx-.95*cell;
+      m.fillStyle=COLORS.red2;
+      m.fillRect(tx,cy+.25*cell,.35*cell,1.05*cell);
+      m.fillStyle=COLORS.red;
+      m.fillRect(tx+.45*cell,cy+.25*cell,.35*cell,1.05*cell);
+    }
+
+    tragicLine(x,y,size,p,small);
+    terminalDim(x,y,size,p,small);
+  }
+  function faviconLink(){
+    let link=document.getElementById("hamlet-c3-favicon");
+    if(!link){
+      link=document.createElement("link");
+      link.id="hamlet-c3-favicon";
+      link.rel="icon";
+      link.type="image/png";
+      link.sizes="32x32";
+      document.head.appendChild(link);
+    }
+    return link;
+  }
+  function render(){
+    renderMaster(state.t,true);
+    o.clearRect(0,0,32,32);
+    o.imageSmoothingEnabled=false;
+    o.drawImage(master,0,0,MASTER,MASTER,0,0,32,32);
+    faviconLink().href=output.toDataURL("image/png");
+  }
+  function intervalMs(){ return Math.max(56,Math.round(110/state.speed)); }
+  function stop(){ if(state.timer!==null){ clearInterval(state.timer); state.timer=null; } }
+  function start(){
+    stop();
+    if(!state.playing || reduceMotion?.matches){ state.t=0; render(); return; }
+    state.timer=setInterval(()=>{ state.t=(state.t+.02*state.speed)%1; render(); }, intervalMs());
+  }
+  function play(){ state.playing=true; start(); }
+  function pause(){ state.playing=false; stop(); render(); }
+  function reset(){ state.t=0; render(); if(state.playing) start(); }
+  function setSpeed(v){ state.speed=Math.max(.35,Math.min(4,Number(v)||1)); if(state.playing) start(); }
+
+  window.HamletFaviconC3 = { state, play, pause, reset, setSpeed, render };
+
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible" && state.playing) start(); });
+  reduceMotion?.addEventListener?.("change",()=>start());
+
+  render();
+  start();
+})();
+</script>
+<!-- HAMLET C3 FAVICON END -->
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
