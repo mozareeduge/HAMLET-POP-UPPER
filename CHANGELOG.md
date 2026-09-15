@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.9 — Statement disclosure
+
+### Added
+- A statement disclosure at the top-right corner (mirroring the work-title
+  mark's top-left placement), holding the work's own artist statement in a
+  native `<details>`/`<summary>` panel rather than a second `<dialog>` —
+  the work's existing dialog is already the apparatus that asks; a second
+  modal would compete with that device instead of sitting beside it.
+  Present from the first frame, never auto-opened, and does not pause or
+  otherwise interact with the score or the death timer.
+- `docs/HAMLET_POP_UPPER_STATEMENT.md` and
+  `docs/HAMLET_POP_UPPER_RESEARCH_NOTE.md`, carrying the statement and the
+  research note as standalone repository documents.
+
 ## v1.8 — Playtest fixes, timing, and the skull
 
 ### Fixed

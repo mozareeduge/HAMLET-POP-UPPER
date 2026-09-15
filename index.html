@@ -374,6 +374,34 @@ dialog.hamlet-dialog::backdrop{background:rgba(15,16,14,.015)}
 }
 .restart.is-visible{opacity:1;pointer-events:auto}
 .restart[hidden]{display:none}
+/* Statement disclosure: mirrors .title-loader's top-left placement on the opposite corner.
+   A native <details> rather than a second <dialog> — the work's own dialog is already the
+   apparatus that asks; a second modal would compete with that device instead of sitting
+   beside it. Present from the first frame, never auto-opened, never gates the score. */
+.statement-disclosure{
+  position:absolute;z-index:6;top:calc(var(--safe-t) + 6px);right:calc(var(--safe-r) + 7px);
+  width:min(420px,calc(100vw - var(--safe-r) - var(--safe-l) - 14px))
+}
+.statement-toggle{
+  display:list-item;list-style:none;cursor:pointer;user-select:none;text-align:right;
+  color:rgba(232,229,215,.33);font:700 9px/1 var(--mono);letter-spacing:.17em;text-transform:uppercase;
+  padding:2px 0;transition:color 130ms steps(2,end)
+}
+.statement-toggle::-webkit-details-marker{display:none}
+.statement-toggle::after{content:"";display:inline-block;width:13px;height:1px;margin:0 0 3px 9px;background:currentColor;vertical-align:middle}
+.statement-toggle:hover,.statement-toggle:focus-visible,.statement-disclosure[open] .statement-toggle{color:var(--bone)}
+.statement-toggle:focus-visible{outline:2px solid var(--signal-paper);outline-offset:3px}
+.statement-panel{
+  box-sizing:border-box;width:100%;margin-top:8px;padding:16px 18px 18px;max-height:min(64vh,520px);overflow:auto;
+  background:rgba(15,16,14,.92);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+  border:1px solid rgba(232,229,215,.42);color:var(--bone);
+  font:15px/1.55 var(--serif);letter-spacing:0;text-transform:none;text-align:left;
+  scrollbar-width:thin;scrollbar-color:rgba(232,229,215,.42) transparent
+}
+.statement-panel p{margin:0 0 1em}
+.statement-panel p:last-child{margin-bottom:0}
+.statement-attribution{font:700 9px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:rgba(232,229,215,.42)}
+@media (max-width:520px){.statement-panel{font-size:14px}}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 noscript{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:rgba(232,229,215,.55);font:12px/1.4 var(--mono)}
 @media (hover:hover) and (pointer:fine){.decision:hover::after{border-color:rgba(23,24,20,.45)}.later:hover{background:rgba(23,24,20,.06)}.restart:hover{color:var(--bone);border-color:rgba(232,229,215,.55)}}
@@ -433,6 +461,17 @@ noscript{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color
     <div class="work-title" aria-hidden="true">Hamlet Pop-Upper</div>
     <span class="event-loader" id="eventLoader" aria-hidden="true"></span>
   </div>
+  <details class="statement-disclosure" id="statementDisclosure">
+    <summary class="statement-toggle">Statement</summary>
+    <div class="statement-panel">
+      <p><strong>Remember this answer.</strong></p>
+      <p>Father is dead before <em>Hamlet Pop-Upper</em> asks its first question. Inside a single browser tab, Hamlet's sentence enters the procedure of a popup: it interrupts, takes the foreground, waits for a selection, withdraws, and returns. The popup becomes a second performer, carrying the question from one call to the next.</p>
+      <p>&ldquo;Remember this answer&rdquo; gives a selection a future. &ldquo;Ask me later&rdquo; gives the question one. The first brings a previous choice into a later encounter; the second composes an interval before the next demand. Both are ordinary ways interfaces organize decisions. Here they become parts of a miniature dramaturgy, placed beside a question whose answer is remade by the time of asking.</p>
+      <p>A fixed score of deaths advances alongside the returning popup. The score supplies a time already decided; the visitor supplies choices made in changing moments. Their relation produces the work's variations. Each event reaches the apparatus through the condition left by an answer, a memory, or a deferral. The score keeps its order, while the trace records how those two times met.</p>
+      <p>The adaptation takes place through the popup's operation of recurrence. The question returns as language; the popup returns as a scheduled call and stored state. When these temporal forms occupy the same apparatus, a selected value can remain exact as data while the next encounter renews, weakens, or reverses the person's commitment to it. <em>Hamlet Pop-Upper</em> keeps that interval active: the answer arrives, the work carries it forward, and the question acquires another present.</p>
+      <p class="statement-attribution">Mohammad Zare (Mozare)</p>
+    </div>
+  </details>
   <div class="event-trace" id="eventTrace" aria-hidden="true"></div>
   <svg class="world-claims" id="worldClaims" aria-hidden="true"></svg>
   <section class="mortality-field" aria-label="Deaths that have occurred">

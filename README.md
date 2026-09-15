@@ -1,33 +1,73 @@
 # Hamlet Pop-Upper
 
-A born-digital work by Mohammad Zare (Mozare). A fixed dramaturgical score —
-Father, Polonius, Ophelia, Mother, Claudius, Rosencrantz and Guildenstern,
-Laertes, then Hamlet's own "So am I." — meets one recurring questioning
-apparatus. The visitor can answer, remember an answer, or ask to be asked
-later; none of it changes what dies, in what order, or when. What changes
-is how the apparatus meets each death, and what it carries afterward.
+*Hamlet Pop-Upper* is a browser-native miniature adaptation by Mohammad Zare (Mozare). Hamlet's question returns through a popup apparatus that can retain a selection or defer another call while a fixed score of deaths advances.
 
-**Live:** this repo is served as a static site — `index.html` at the root
-is the current version. Enable it once under **Settings → Pages → Build
-and deployment → Source: Deploy from a branch → `main` / `/(root)`** and
-it's live at `https://mozareeduge.github.io/hamlet-pop-upper/`.
+**Live work:** https://hamlet-popupper.theblackbirdfield.com/
 
-## What's here
+## Dramaturgical structure
 
-- **`index.html`** — the current version (v1.8), a single dependency-free
-  HTML file. No build step, no server, no external assets.
-- **`archive/`** — prior versions (v1.5, v1.6, v1.7), kept for the record.
-- **`change-plan/plan-hamlet-pop-upper.md`** — the full decision history:
-  every diagnosed finding, every decision, its evidence, and its
-  verification, from the v1.5→v1.6 unification through the v1.8 timing and
-  legibility fixes and the skull glyph. Provenance-carrying, human- and
-  machine-readable, produced under the atelier protocol.
+"Father is dead." establishes the opening condition. Seven timed events then follow in a fixed order: Polonius, Ophelia, Mother, Claudius, Rosencrantz and Guildenstern, Laertes, and Hamlet.
 
-## Version summary
+The dialog repeatedly presents `TO BE` and `NOT TO BE`. Selecting **Remember this answer** retains the chosen value for later dialog openings. Selecting **Ask me later** schedules another opening. These actions change the state in which the next timed event meets the apparatus; they leave the score's wording, order, and timing intact.
 
-See `CHANGELOG.md` for the full history. Current: **v1.8** — playtest-driven
-timing and legibility fixes (an unanswered call now visibly re-presents
-itself instead of silently freezing; shorter, score-aware reopen waits; an
-interaction speaks on the popup surface before it withdraws; "ask me
-later" gets a wordless draining gauge), plus a recurring skull glyph at the
-instrument rail and, enlarged, in the terminal afterimage.
+Before a death enters the visible list, the program classifies the encounter:
+
+- `unanswered` — the question was open without a selected answer;
+- `answer_collision` — the death arrived while an answer was being registered;
+- `deferred` — the death arrived during an active "Ask me later" interval;
+- `recalled` — the dialog was closed while a remembered answer remained active;
+- `answered` — the dialog was closed after an unremembered answer;
+- `closed` — the dialog was closed without one of the more specific conditions;
+- `terminal` — Hamlet's final event.
+
+The class changes three visible relations: the incision shown when the event reaches the dialog, the position and density of the thin line retained on the dialog surface, and the connection drawn from the corresponding death line back to the apparatus. Visitor choices therefore alter each encounter and its trace while the tragedy keeps its fixed sequence.
+
+## Implementation
+
+The work is contained in one dependency-free `index.html` file. It requires no build step, runtime package, external asset, or network service.
+
+The question uses an in-page HTML `<dialog>` opened with `showModal()`. While it is open, the browser places it in the top layer and makes the rest of the document inert.
+
+Selecting **Remember this answer** writes `to_be` or `not_to_be` to `localStorage` under `hamlet-pop-upper:answer`, allowing later dialog openings and later sessions on the same origin to retrieve it. When persistent storage is unavailable, an in-memory value carries the selection through the current session; clearing **Remember this answer** removes the saved value. Answer data stays within browser storage.
+
+The score uses accumulated visible-page time. `worldElapsed` advances while `document.hidden` is false, so switching away from the tab pauses score time. The stored answer and the death timer remain separate inputs to `classifyEncounter()`, which derives the encounter class used by the trace system.
+
+Sound consists of synthesized cues created through the Web Audio API after visitor input. The artifact also includes keyboard-operable controls, live regions, reduced-motion handling, forced-colors handling, and responsive layouts.
+
+A statement disclosure (top-right corner, labeled "Statement") holds the work's own artist statement in a native `<details>` panel, available from the first frame and never gating the dialog or the score.
+
+## Run locally
+
+Serve the repository root through a static server so the page has a stable origin:
+
+```bash
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000/`.
+
+## Repository map
+
+- `index.html` — released work
+- `CHANGELOG.md` — version history
+- `change-plan/plan-hamlet-pop-upper.md` — design decisions, implementation evidence, and verification history
+- `archive/` — retained earlier versions
+- `docs/HAMLET_POP_UPPER_STATEMENT.md` — public work statement
+- `docs/HAMLET_POP_UPPER_RESEARCH_NOTE.md` — artistic-research context and sources
+
+## Research lineage
+
+In *Hamlet*, the question enters another dramatic moment each time the work calls it back. In the interface, another dialog opening brings earlier selections and deferrals into the present machine state. Joining these operations allows a past answer to return as material inside a later death event. The [research note](docs/HAMLET_POP_UPPER_RESEARCH_NOTE.md) documents the popup sources, browser-warning research, claim boundaries, and the mechanisms through which that research enters the artifact.
+
+## Current edition
+
+- Version: `v1.9`
+- Form: autonomous single-file HTML
+- Language: English
+- Duration: approximately ninety seconds to the terminal state
+- Author: Mohammad Zare (Mozare)
+- Year: 2026
+
+## Citation
+
+> Zare, Mohammad (Mozare). *Hamlet Pop-Upper*. Browser-native miniature adaptation, version 1.9, 2026.
