@@ -34,7 +34,7 @@ The score uses accumulated visible-page time. `worldElapsed` advances while `doc
 
 Sound consists of synthesized cues created through the Web Audio API after visitor input. The artifact also includes keyboard-operable controls, live regions, reduced-motion handling, forced-colors handling, and responsive layouts.
 
-A statement disclosure (top-right corner, labeled "Statement") holds the work's own artist statement in a native `<details>` panel, available from the first frame and never gating the dialog or the score.
+The work's own artist statement is reachable two ways, because the dialog's `showModal()` makes the rest of the document inert while it's open — a corner control outside the dialog would be unreachable for most of the piece's runtime. A "Statement" mark in the dialog's own instrument rail swaps its content area to the statement text whenever the dialog is open (reachable in the majority state); a matching "Statement" disclosure at the top-right corner covers the windows when the dialog is closed. Opening one auto-closes the other rather than risking the two ever being visibly open at once, and Hamlet's own terminal line is guaranteed never to land hidden behind the statement pane, even if a visitor is mid-read when it arrives.
 
 ## Run locally
 
