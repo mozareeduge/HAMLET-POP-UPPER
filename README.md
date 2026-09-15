@@ -61,7 +61,7 @@ In *Hamlet*, the question enters another dramatic moment each time the work call
 
 ## Current edition
 
-- Version: `v1.9`
+- Version: `v1.8`
 - Form: autonomous single-file HTML
 - Language: English
 - Duration: approximately ninety seconds to the terminal state
@@ -70,4 +70,4 @@ In *Hamlet*, the question enters another dramatic moment each time the work call
 
 ## Citation
 
-> Zare, Mohammad (Mozare). *Hamlet Pop-Upper*. Browser-native miniature adaptation, version 1.9, 2026.
+> Zare, Mohammad (Mozare). *Hamlet Pop-Upper*. Browser-native miniature adaptation, version 1.8, 2026.

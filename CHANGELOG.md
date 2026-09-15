@@ -1,6 +1,9 @@
 # Changelog
 
-## v1.9 — Statement disclosure
+## Unreleased — Statement disclosure
+
+Pending review; not yet folded into a numbered edition. The version number
+above this section is Mohammad's call, not inferred here.
 
 ### Added
 - A statement disclosure at the top-right corner (mirroring the work-title
