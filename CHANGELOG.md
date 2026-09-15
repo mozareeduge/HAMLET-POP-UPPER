@@ -1,5 +1,40 @@
 # Changelog
 
+## Unreleased — Statement disclosure
+
+Pending review; not yet folded into a numbered edition. The version number
+above this section is Mohammad's call, not inferred here.
+
+### Added
+- A statement disclosure at the top-right corner (mirroring the work-title
+  mark's top-left placement), holding the work's own artist statement in a
+  native `<details>`/`<summary>` panel rather than a second `<dialog>` —
+  the work's existing dialog is already the apparatus that asks; a second
+  modal would compete with that device instead of sitting beside it.
+  Present from the first frame, never auto-opened, and does not pause or
+  otherwise interact with the score or the death timer.
+- `docs/HAMLET_POP_UPPER_STATEMENT.md` and
+  `docs/HAMLET_POP_UPPER_RESEARCH_NOTE.md`, carrying the statement and the
+  research note as standalone repository documents.
+
+### Fixed
+- The corner disclosure alone was unreachable for most of a typical
+  encounter: `showModal()` makes everything outside the dialog inert while
+  it's open, and the dialog is open more often than not (it opens
+  automatically at 1.5s and stays open, by design, until answered,
+  deferred, or forced by a death). A second "Statement" access point now
+  lives inside the dialog's own instrument rail, reachable whenever the
+  corner one isn't. `safeOpenDialog()` resets to the question view on
+  every genuinely new call, and `beginTerminal()` resets unconditionally
+  so Hamlet's own "So am I." can never land hidden behind the statement
+  pane. The corner disclosure now also closes itself the instant the
+  dialog reopens, rather than risking the two being visibly open — and
+  colliding — at once. Widened both reading surfaces toward a proper prose
+  measure and gave the scrollbar an explicit, palette-matched design for
+  the viewports where the text still doesn't fit without one (verified:
+  fits without scroll on desktop; mobile and 320px both still need it and
+  now render one that belongs to the piece rather than a browser default).
+
 ## v1.8 — Playtest fixes, timing, and the skull
 
 ### Fixed
