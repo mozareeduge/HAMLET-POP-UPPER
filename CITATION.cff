@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you cite this work, please use the metadata below."
+title: "Hamlet Pop-Upper"
+abstract: >
+  A born-digital work by Mohammad Zare (Mozare) in which the fixed dramaturgical
+  score of Hamlet's deaths meets one recurring questioning interface; the visitor's
+  answers change how the apparatus meets each death, never what dies or when.
+authors:
+  - family-names: Zare
+    given-names: Mohammad
+    orcid: "https://orcid.org/0009-0002-9032-3614"
+    alias: Mozare
+type: software
+version: "1.8"
+date-released: 2026-09-15
+url: "https://hamlet-popupper.theblackbirdfield.com/"
+repository-code: "https://github.com/mozareeduge/HAMLET-POP-UPPER"
+license-url: "https://github.com/mozareeduge/HAMLET-POP-UPPER/blob/main/RIGHTS.md"
+keywords:
+  - electronic literature
+  - born-digital artwork
+  - Hamlet
+  - interface poetics

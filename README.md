@@ -1,5 +1,11 @@
 # Hamlet Pop-Upper
 
+**by Mohammad Zare (Mozare) · version 1.8 · [Experience the work](https://hamlet-popupper.theblackbirdfield.com/)**
+
+**How to cite:** Zare, M. (2026). *Hamlet Pop-Upper* (Version 1.8) [Electronic literature]. https://hamlet-popupper.theblackbirdfield.com/
+
+**Rights:** Copyright 2026 Mohammad Zare. See [RIGHTS.md](RIGHTS.md).
+
 A born-digital work by Mohammad Zare (Mozare). A fixed dramaturgical score —
 Father, Polonius, Ophelia, Mother, Claudius, Rosencrantz and Guildenstern,
 Laertes, then Hamlet's own "So am I." — meets one recurring questioning
@@ -7,10 +13,12 @@ apparatus. The visitor can answer, remember an answer, or ask to be asked
 later; none of it changes what dies, in what order, or when. What changes
 is how the apparatus meets each death, and what it carries afterward.
 
-**Live:** this repo is served as a static site — `index.html` at the root
-is the current version. Enable it once under **Settings → Pages → Build
-and deployment → Source: Deploy from a branch → `main` / `/(root)`** and
-it's live at `https://mozareeduge.github.io/hamlet-pop-upper/`.
+**Live:** https://hamlet-popupper.theblackbirdfield.com/ — served by GitHub Pages from
+the `main` branch root of this repository (custom domain in `CNAME`, HTTPS enforced).
+`index.html` at the root is the current version.
+
+**`/v2/`:** a review preview of a later statement-disclosure branch, kept at
+https://hamlet-popupper.theblackbirdfield.com/v2/ for comparison; it is not the published version.
 
 ## What's here
 
